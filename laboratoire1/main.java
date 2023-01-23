@@ -5,11 +5,10 @@ import java.util.Random;
 
 
 public class main {
-    static Random rand = new Random();
     public static void main(String[] args) {
         RechercheTableau rt = new RechercheTableau();
         
-        int tableau[]= RandomArray(1000);
+        int tableau[]= RandomArray(100000);
         int nbExecution = 100000;
        
         tempsExecution(nbExecution, rt, tableau);
@@ -35,6 +34,8 @@ public class main {
         long[] tempsExecutionBinaireModifie = new long[nbExecution];
 
         double avg;
+
+        Random rand = new Random();
 
         for (int i = 0; i < nbExecution; i++) {
             chercheVal = tableau[rand.nextInt(tableau.length)];
