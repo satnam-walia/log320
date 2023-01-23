@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 
-public class CalculeTempsExecution {
+public class main {
     static Random rand = new Random();
     public static void main(String[] args) {
         RechercheTableau rt = new RechercheTableau();
