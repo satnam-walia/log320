@@ -75,5 +75,5 @@ public class RechercheTableau{
             return RechercheBinaireModifieRescursive(tab, milieu1 + 1, milieu2 - 1, val);
         }   
     }
-
+ 
 }
