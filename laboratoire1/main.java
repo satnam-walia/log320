@@ -8,19 +8,22 @@ public class main {
     public static void main(String[] args) {
         RechercheTableau rt = new RechercheTableau();
         
-        int tableau[]= RandomArray(100000);
-        int nbExecution = 100000;
-       
-        tempsExecution(nbExecution, rt, tableau);
-        nbComparison(rt, tableau);
-      
+        int tableau[]= CreatingArray(1000);
+        int nbExecution = 1000000;
+        
+        System.out.println("**********         Debut recherche         *************");
+        //tempsExecution(nbExecution, rt, tableau);
+        nbComparison(rt, tableau, 5555);
+        rechercheIndex(rt, tableau, 5555);
     }
-    public static int[] RandomArray(int n) {
-        int[] randomArray = new int[n+1];
-        for (int i = 0; i < randomArray.length ; i++) {
-            randomArray[i] = i;
+    public static int[] CreatingArray(int n) {
+        int[] arrayOfNumbers = new int[n];
+        int counter = 1;
+        for (int i = 0; i < arrayOfNumbers.length ; i++) {
+            arrayOfNumbers[i] = counter;
+            counter ++;
         }
-        return randomArray;
+        return arrayOfNumbers;
     }
 
     public static void tempsExecution(int nbExecution, RechercheTableau rt, int[] tableau) {
@@ -66,15 +69,30 @@ public class main {
         System.out.println("temps d'exécution moyen pour RechercheBinaireModifie: " + avg + " ns\n");
     }
 
-    public static void nbComparison(RechercheTableau rt, int[] tableau){
-        rt.RechercheLineaire(tableau, tableau.length, 7);
+    public static void nbComparison(RechercheTableau rt, int[] tableau, int x){
+        // System.out.println("\nTableau donne: \n");
+        // for(int i = 0; i < tableau.length; i++){
+        //     System.out.println("Tableau[" + i + "]: " + tableau[i]);
+        // }
+        rt.RechercheLineaire(tableau, tableau.length, x);
         System.out.println("RechercheLinaire counter: " + rt.getCounter());
 
-        rt.RechercheBinaire(tableau, tableau.length, 7);
+        rt.RechercheBinaire(tableau, tableau.length, x);
         System.out.println("RechercheBinaire counter: " + rt.getCounter());
 
-        rt.RechercheBinaireModifie(tableau, tableau.length, 7);
+        rt.RechercheBinaireModifie(tableau, tableau.length, x);
         System.out.println("RechercheBinaireModifie counter: " + rt.getCounter());
+    }
+
+    public static void rechercheIndex(RechercheTableau rt, int[] tableau, int x){
+        int index = 0;
+        index = rt.RechercheLineaire(tableau, tableau.length, x);
+        System.out.println("Recherche Lineaire index: " + index);
+        index = rt.RechercheBinaire(tableau, tableau.length, x);
+        System.out.println("Recherche Binaire index: " + index);
+        index = rt.RechercheBinaireModifie(tableau, tableau.length, x);
+        System.out.println("Recherche Binaire modifie index: " + index);
+
     }
 }
 
