@@ -6,6 +6,7 @@ package laboratoire2;
 import java.io.*;
 import java.util.*;
 
+//test
 public class Huffman{
 
     // Ne pas changer ces fonctions, elles seront utilisées pour tester votre programme
