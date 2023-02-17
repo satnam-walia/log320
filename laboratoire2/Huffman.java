@@ -1,42 +1,43 @@
 package laboratoire2;
-// import java.io.FileInputStream;
-// import java.io.IOException;
-// import java.io.InputStreamReader;
-// import java.io.FileNotFoundException;
-import java.io.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
-//test
 public class Huffman{
 
+    private static byte[] bytesFichier;
+    private static List<Byte> bytesFichierDecoder;
+    private static Map<Byte, Integer> byteFrequence = new HashMap<>();
+    private static Noeud racine;
+    private static Map<Byte, String> tableHuffmanCode = new HashMap<>();
+    private static Map<String, Byte> tableHuffmanCodeDecode = new HashMap<>();
+
     // Ne pas changer ces fonctions, elles seront utilisées pour tester votre programme
-    public void Compresser(String nomFichierEntre, String nomFichierSortie) throws FileNotFoundException,IOException {
+    public void Compresser(String nomFichierEntre, String nomFichierSortie) throws IOException {
         readFile(nomFichierEntre);
+        frequenceTable();
     }
 
     public void Decompresser(String nomFichierEntre, String nomFichierSortie){
 
     }
 
-
-
-    public void readFile(String fileName) throws FileNotFoundException,IOException {
-        int numOfReadChar_textMode = 0; // pour connaître le nombre de caractères lus
-        FileInputStream fileInputStream = new FileInputStream(fileName);
-        Hashtable<String, Integer> freqTable = new Hashtable<>();
-        /* TODO : pour chaque byte => voir s'il existe déjà dans la table
-        ** TODO : si non : l'ajouter
-        ** TODO : si oui; ajouter +1 à sa fréquence
-        */
-
-        try (InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8")) {
-            int singleCharInt;
-            char singleChar;
-            while((singleCharInt = inputStreamReader.read()) != -1) {
-                singleChar = (char) singleCharInt;
-                numOfReadChar_textMode++;
-            }
-        }
+    public void readFile(String fileName) throws IOException {
+        Path path = Paths.get(fileName);
+        this.bytesFichier = Files.readAllBytes(path);
     }
 
+    public void frequenceTable() throws IOException {
+        for (Byte character : bytesFichier) {
+            Integer frequency = byteFrequence.get(character);
+            if (frequency == null) {
+                frequency = 1;
+            } else {
+                frequency += 1;
+            }
+            byteFrequence.put(character, frequency);
+        }
+    }
 }
