@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
-public class Huffman implements Comparable<Huffman>
+public class Huffman
 {
 
     /**
@@ -44,7 +44,7 @@ public class Huffman implements Comparable<Huffman>
             }
         }
     }
-
+	
 	/**
 	* Compressez le flux d'entrée dans le flux de sortie en utilisant le codage Huffman
 	* @param in1 le flux d'entrée à compresser
@@ -53,6 +53,7 @@ public class Huffman implements Comparable<Huffman>
 	**/
     public String compress_process(InputStream in1, InputStream in2, OutputStream out) {
         try {
+
             this.out = out;
             byte[] buffer = new byte[10240];
             int searching = in1.read(buffer);
@@ -64,26 +65,26 @@ public class Huffman implements Comparable<Huffman>
                 searching = in1.read(buffer);
             }
             in1.close();
-            PriorityQueue<Huffman> ph = new PriorityQueue();
-            Huffman null_tree = new Huffman();
+            PriorityQueue<HuffmanTree> ph = new PriorityQueue();
+            HuffmanTree null_tree = new HuffmanTree();
             for (int i = 0; i < 256; i++) {
                 if (frequency[i] > 0) {
-                    ph.offer(new Huffman((byte) (i - 128), null_tree,
+                    ph.offer(new HuffmanTree((byte) (i - 128), null_tree,
                             null_tree, frequency[i]));
                 }
             }
             if (ph.size() == 1) {
-                ph.offer(new Huffman((byte) 0, null_tree, null_tree, 0));
+                ph.offer(new HuffmanTree((byte) 0, null_tree, null_tree, 0));
             }
             while (ph.size() > 1) {
-                Huffman bt_get1 = ph.poll();
-                Huffman bt_get2 = ph.poll();
-                Huffman add = new Huffman(bt_get1, bt_get2,
+                HuffmanTree bt_get1 = ph.poll();
+                HuffmanTree bt_get2 = ph.poll();
+                HuffmanTree add = new HuffmanTree(bt_get1, bt_get2,
                         bt_get1.frequency + bt_get2.frequency);
                 ph.offer(add);
             }
 
-            Huffman htree = ph.poll();
+            HuffmanTree htree = ph.poll();
             write(htree.toBooleanArray());
             boolean[][] huffmantreeArrayList = htree.toArrayList();
             searching = in2.read(buffer);
@@ -138,11 +139,6 @@ public class Huffman implements Comparable<Huffman>
 		}
 	}
 
-	public Huffman(OutputStream out, boolean bitdata) {
-		this.out = out;
-		booleandata = bitdata;
-	}
-
     /** 
 	 * Décompresser le flux d'entrée dans le flux de sortie en utilisant le codage Huffman
 	 * @param in le flux d'entrée à décompresser
@@ -150,7 +146,7 @@ public class Huffman implements Comparable<Huffman>
 	 **/
 	public String decompress2(InputStream in, OutputStream out) {
 		try {
-			Huffman wb = new Huffman(out, false);
+			WriteBuffer wb = new WriteBuffer(out, false);
 			
 			this.out = out;
 			byte[] buffer = new byte[12288];
@@ -165,11 +161,11 @@ public class Huffman implements Comparable<Huffman>
 			int numLeavesFound = 0;
 			int treeleafposition = 0;
 			
-			ArrayList<Huffman> htreebuilder = new ArrayList();
-			ArrayList<Huffman> leaves = new ArrayList();
-			htreebuilder.add(new Huffman());
-			Huffman htree = htreebuilder.get(0);
-			Huffman currentTree = htree;
+			ArrayList<HuffmanTree> htreebuilder = new ArrayList();
+			ArrayList<HuffmanTree> leaves = new ArrayList();
+			htreebuilder.add(new HuffmanTree());
+			HuffmanTree htree = htreebuilder.get(0);
+			HuffmanTree currentTree = htree;
 			int position = 0;
 			
 			int searching = in.read(buffer);
@@ -179,16 +175,16 @@ public class Huffman implements Comparable<Huffman>
 					for (int j = 0; j < 8; j++) {
 						if (!treefound) {
 							if (bufferbool[j]) {
-								Huffman lookingat = htreebuilder.get(position);
+								HuffmanTree lookingat = htreebuilder.get(position);
 								leaves.add(lookingat);
 								
 								numLeavesThisLevel++;
 								numLeaves++;
 							}
 							else {
-								Huffman lookingat = htreebuilder.get(position);
-								lookingat.left = new Huffman();
-								lookingat.right = new Huffman();
+								HuffmanTree lookingat = htreebuilder.get(position);
+								lookingat.left = new HuffmanTree();
+								lookingat.right = new HuffmanTree();
 								htreebuilder.add(lookingat.getLeft());
 								htreebuilder.add(lookingat.getRight());
 								
@@ -208,7 +204,7 @@ public class Huffman implements Comparable<Huffman>
 							treeleaf[treeleafposition] = bufferbool[j];
 							treeleafposition++;
 							if (treeleafposition == 8) {
-								Huffman leaf = leaves.get(numLeavesFound);
+								HuffmanTree leaf = leaves.get(numLeavesFound);
 								leaf.character = booleanToByte(treeleaf);
 								leaf.leafnode = true;
 								treeleafposition = 0;
@@ -257,7 +253,7 @@ public class Huffman implements Comparable<Huffman>
 					currentTree = currentTree.getRight();
 				}
 				if (currentTree.isLeaf()) {
-					write(currentTree.getCharacter());
+					wb.write(currentTree.getCharacter());
 					currentTree = htree;
 				}
 			}
@@ -374,162 +370,4 @@ public class Huffman implements Comparable<Huffman>
         }
         return bool;
     }
-
-    public int frequency = -1;
-	public byte character;
-	public boolean leafnode = false;
-	public Huffman left = null;
-	public Huffman right = null;
-
-    /**
-	* Construit un arbre de Huffman contenant l'élément spécifié à la
-	* racine, et un arbre de Huffman gauche et à droite comme enfants.
-	* @param item item à la racine de cet arbre de Huffman
-	* @param b1 Huffman Tree en bas à gauche
-	* @param b2 huffman tree en dessous à droite
-	* @param f La fréquence des caractères pour le tri
-	**/
-	public Huffman(byte item, Huffman b1, Huffman b2, int f) {
-		frequency = f;
-		character = item;
-		left = b1;
-		right = b2;
-		leafnode = true;
-	}
-	
-	/**
-	* Construit un arbre de Huffman ne contenant aucun élément à la
-	* racine, et un arbre de Huffman gauche et à droite comme enfants.
-	* @param b1 Huffman Tree en bas à gauche
-	* @param b2 huffman tree en dessous à droite
-	* @param f La fréquence des caractères pour le tri
-	**/
-	public Huffman(Huffman b1, Huffman b2, int f) {
-		frequency = f;
-		left = b1;
-		right = b2;
-	}
-	
-	
-	/**
-	  * Construit un arbre de Huffman vide
-	 **/
-	public Huffman() {
-	}
-	
-    /**
-	* Déterminer si cet arbre de Huffman est une feuille
-	* @retour vrai s'il s'agit d'une feuille. Faux sinon.
-	**/
-	public boolean isLeaf() {
-		return leafnode;
-	}
-	
-	public byte getCharacter() {
-		return character;
-	}
-	
-	public Huffman getLeft() {
-		return left;
-	}
-	
-	public Huffman getRight() {
-		return right;
-	}
-	
-	/**
-	* Compare cet arbre de Huffman avec l'arbre de Huffman spécifié pour la commande.
-	* @return un entier négatif, zéro ou un entier positif comme cet objet
-	* est inférieur, égal ou supérieur à l'objet spécifié.
-	**/
-	public int compareTo(Huffman bt) {
-			return frequency - bt.frequency;
-	}
-	
-	
-	/**
-	* Convertir l'arbre de Huffman en un tableau booléen pour l'impression en fichier
-	* Caractère de retour pour l'arbre de Huffman
-	**/
-	public boolean[] toBooleanArray(){
-		boolean[] boolArray = new boolean[1024];
-		byte[] characters = new byte[1024];
-		ArrayList<Huffman> queue = new ArrayList();
-		
-		queue.add(this);
-		boolArray[0] = false;
-		int arraypos = 0;
-		int position = 0;
-		int characterpos = 0;
-		while (position < queue.size()) {
-			boolArray[arraypos] = queue.get(position).isLeaf();
-			if (queue.get(position).isLeaf()) {
-				characters[characterpos] = queue.get(position).getCharacter();
-				characterpos++;
-			}
-			else {
-				queue.add(queue.get(position).getLeft());
-				queue.add(queue.get(position).getRight());
-			}
-			position++;
-			arraypos++;
-		}
-		
-		boolean[] ret = new boolean[arraypos + 8 * characterpos];
-		for (int i = 0; i < arraypos; i++) {
-			ret[i] = boolArray[i];
-		}
-		for (int i = 0; i < characterpos; i++) {
-			byte characterByte = characters[i];
-			boolean[] bits = Huffman.byteToBoolean(characterByte);
-			for (int j = 0; j < 8; j++) {
-				ret[arraypos + (8 * i) + j] = bits[j];
-			}
-		}
-		
-		return ret;
-	}
-	
-	
-	/**
-	* Convertir l’arbre de Huffman en un booléen [] [] pour mapper facilement les octets à
-	* leurs bits compressés
-	* @return Une carte d'octets en bits
-	**/
-	public boolean[][] toArrayList() {
-		boolean[][] ret = new boolean[256][];
-		ArrayList<Huffman> queue = new ArrayList();
-		ArrayList<boolean[]> binary = new ArrayList();
-		queue.add(this);
-		binary.add(new boolean[0]);
-		
-		int position = 0;
-		while (position < queue.size()) {
-			boolean isLeaf = queue.get(position).isLeaf();
-			if (!isLeaf) {
-				boolean[] binaryString = binary.get(position);
-				boolean[] binaryLeft = new boolean[binaryString.length + 1];
-				boolean[] binaryRight = new boolean[binaryString.length + 1];
-				for (int i = 0; i < binaryString.length; i++) {
-					binaryLeft[i] = binaryString[i];
-					binaryRight[i] = binaryString[i];
-				}
-				binaryLeft[binaryLeft.length - 1] = false;
-				binaryRight[binaryRight.length - 1] = true;
-				
-				queue.add(queue.get(position).getLeft());
-				binary.add(binaryLeft);
-				queue.add(queue.get(position).getRight());
-				binary.add(binaryRight);
-			}
-			else {
-				int toAdd = (int) queue.get(position).getCharacter() + 128;
-				ret[toAdd] = binary.get(position);
-			}
-			position++;
-		}
-		
-		return ret;
-	}
-
 }
