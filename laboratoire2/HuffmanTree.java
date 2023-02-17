@@ -4,21 +4,6 @@ import laboratoire2.Converter;
 
 import java.util.ArrayList;
 
-/**
- * LE CODE SOURCE DE L'ALGORITHME HUFFMAN A ETE INSPIRE DE SITES SUIVANT :
- * http://courses.ics.hawaii.edu/ics211f18/morea/120.trees/files/Huffman.java
- * https://courses.cs.washington.edu/courses/cse143/12wi/homework/8/
- * 
- * 
- * LE CODE SOURCE DE L'ALGORITHME LZW A ETE INSPIRE DE SITES SUIVANT :
- * https://codereview.stackexchange.com/questions/122080/simplifying-lzw-compression-decompression
- * https://rosettacode.org/wiki/LZW_compression
- * 
- * 
- * @author NAMOUCHI Cherif BALTI Sami
- */
-
-
 public class HuffmanTree implements Comparable<HuffmanTree>
 {
 	public int frequency = -1;
