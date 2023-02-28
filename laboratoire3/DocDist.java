@@ -6,22 +6,19 @@ public class DocDist {
 
     public static void main(String[] args) throws Exception {
        
-        String file1 = "laboratoire3/files/fables_Lafontaine.txt";
-        String file2 = "laboratoire3/files/l_avare-Moliere.txt";
+        String file1 = "laboratoire3/files/monte_cristo_1-Dumas.txt";
+        String file2 = "laboratoire3/files/adventures_of_Sherlock_Holmes-Doyle.txt";
     
         Map<String, Integer> freq1 = getWordFreq(file1);
         Map<String, Integer> freq2 = getWordFreq(file2);
 
         Map<String, Integer> freq1Dist = getTotalDistinctWords(freq1);
         Map<String, Integer> freq2Dist = getTotalDistinctWords(freq2);
-        System.out.printf("*****%d******%d*********\n",freq1.size(), freq2.size());
         
         double magnitude1 = computeMagnitude(freq1Dist);
         double magnitude2 = computeMagnitude(freq2Dist);
-        System.out.printf("*****%.2f******%.2f*********\n",magnitude1, magnitude2);
 
         double scalarProduct = computeScalarProduct(freq1Dist, freq2Dist);
-        System.out.printf("***********%.2f*********\n",scalarProduct);
         
         double cosineSimilarity = scalarProduct / (magnitude1 * magnitude2);
 
