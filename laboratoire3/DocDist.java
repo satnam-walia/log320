@@ -4,7 +4,7 @@ import java.util.*;
 
 public class DocDist {
 
-    public static double docDistance(String nomFichier1, String nomFichier2) throws Exception{
+    public double docDistance(String nomFichier1, String nomFichier2) throws Exception{
        
         Map<String, Integer> freq1 = getWordFreq(nomFichier1);
         Map<String, Integer> freq2 = getWordFreq(nomFichier2);
