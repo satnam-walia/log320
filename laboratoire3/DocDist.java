@@ -4,31 +4,25 @@ import java.util.*;
 
 public class DocDist {
 
-    public static void main(String[] args) throws Exception {
+    public double docDistance(String nomFichier1, String nomFichier2) throws Exception{
        
-        String file1 = "laboratoire3/files/fables_Lafontaine.txt";
-        String file2 = "laboratoire3/files/l_avare-Moliere.txt";
-    
-        Map<String, Integer> freq1 = getWordFreq(file1);
-        Map<String, Integer> freq2 = getWordFreq(file2);
+        Map<String, Integer> freq1 = getWordFreq(nomFichier1);
+        Map<String, Integer> freq2 = getWordFreq(nomFichier2);
 
         Map<String, Integer> freq1Dist = getTotalDistinctWords(freq1);
         Map<String, Integer> freq2Dist = getTotalDistinctWords(freq2);
-        System.out.printf("*****%d******%d*********\n",freq1.size(), freq2.size());
         
         double magnitude1 = computeMagnitude(freq1Dist);
         double magnitude2 = computeMagnitude(freq2Dist);
-        System.out.printf("*****%.2f******%.2f*********\n",magnitude1, magnitude2);
 
         double scalarProduct = computeScalarProduct(freq1Dist, freq2Dist);
-        System.out.printf("***********%.2f*********\n",scalarProduct);
         
         double cosineSimilarity = scalarProduct / (magnitude1 * magnitude2);
 
 
-        System.out.printf("Fichier %s : %d mots, %d mots distincts\n", file1, getTotalWords(freq1), freq1Dist.size());
-        System.out.printf("Fichier %s : %d mots, %d mots distincts\n", file2, getTotalWords(freq2), freq2Dist.size());
-        System.out.printf("La distance cosinus entre les deux documents est de %.6f radians.\n", Math.acos(cosineSimilarity));
+        System.out.printf("Fichier %s : %d mots, %d mots distincts\n", nomFichier1, getTotalWords(freq1), freq1Dist.size());
+        System.out.printf("Fichier %s : %d mots, %d mots distincts\n", nomFichier2, getTotalWords(freq2), freq2Dist.size());
+        return Math.acos(cosineSimilarity);
     }
 
     private static Map<String, Integer> getWordFreq(String filename) throws Exception {
